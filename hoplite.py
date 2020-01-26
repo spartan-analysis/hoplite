@@ -1,6 +1,4 @@
 from tensorflow.keras.models import Model
-from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications.vgg16 import preprocess_input
 import numpy as np
 import csv
 import os
@@ -93,11 +91,6 @@ class LayerData:
 
 
 # example preprocess for vgg16 TODO improve this structure
-# returns input ready to be processed
-def vgg16_preprocess(path):
-    img = image.load_img(path, target_size=(224, 244))
-    return preprocess_input(np.expand_dims(image.img_to_array(img), axis=0))
-
 
 # TODO change the data gathering to count small values as zeroes as well
 # instead of just exact 0s
@@ -117,7 +110,8 @@ class Hoplite:
         self.input_layer_data = 0
         self.conv_layers_data = {}
 
-    def compute_average_sparsity(self, output):
+    @staticmethod
+    def compute_average_sparsity(output):
         return output.size - np.count_nonzero(output)
 
     @staticmethod
@@ -141,13 +135,12 @@ class Hoplite:
     @staticmethod
     def consec_row(output):
         row_hist = [0] * (len(output[0][0]) + 1)
-        print(len(output))
         np.apply_along_axis(Hoplite.consec_1d, 2, output, row_hist)
         return row_hist
 
     @staticmethod
     def consec_col(output):
-        col_hist = [0] * (len(output[0]))
+        col_hist = [0] * (len(output[0]) + 1)
         np.apply_along_axis(Hoplite.consec_1d, 1, output, col_hist)
         return col_hist
 
@@ -158,30 +151,36 @@ class Hoplite:
         return chan_hist
 
     @staticmethod
+    def chunk_array(lst, n):
+        for i in range(0, len(lst), n):
+            yield lst[i:i + n]
+
+    @staticmethod
     def vec_1d(arr, vec_size, hist):
         if len(arr) < vec_size:
             return
 
-        chunks = np.array_split(arr, vec_size)
+        chunks = Hoplite.chunk_array(arr, vec_size)
         for chunk in chunks:
-            zeroes = len(chunk) - np.count_nonzero(arr)
+            zeroes = len(chunk) - np.count_nonzero(chunk)
+            print(zeroes)
             hist[zeroes] += 1
 
     @staticmethod
     def vec_3d_row(output, vec_size):
-        vec_row_hist = [0] * (vec_size + 1)
+        vec_row_hist = [0] * (vec_size + 5)
         np.apply_along_axis(Hoplite.vec_1d, 2, output, vec_size, vec_row_hist)
         return vec_row_hist
 
     @staticmethod
     def vec_3d_col(output, vec_size):
-        vec_col_hist = [0] * (vec_size + 1)
+        vec_col_hist = [0] * (vec_size + 5)
         np.apply_along_axis(Hoplite.vec_1d, 1, output, vec_size, vec_col_hist)
         return vec_col_hist
 
     @staticmethod
     def vec_3d_chan(output, vec_size):
-        vec_chan_hist = [0] * (vec_size + 1)
+        vec_chan_hist = [0] * (vec_size + 5)
         np.apply_along_axis(Hoplite.vec_1d, 0, output, vec_size, vec_chan_hist)
         return vec_chan_hist
 
@@ -201,9 +200,7 @@ class Hoplite:
                     name, self.model.layers[0].output_shape[0][1:]
                 )
 
-                self.input_layer_data.average_sparsity = Hoplite.compute_average_sparsity(
-                    output
-                )
+                self.input_layer_data.average_sparsity = Hoplite.compute_average_sparsity(output)
 
             # for conv layers
             temp = LayerData(layer, self.model.get_layer(layer).output_shape[1:])
@@ -228,10 +225,12 @@ class Hoplite:
             temp.vec32_col_hist = self.vec_3d_col(output, 32)
             temp.vec32_chan_hist = self.vec_3d_chan(output, 32)
 
-            if self.conv_layers_data[layer] is None:
-                self.conv_layers_data[layer] = temp
-            else:
-                self.conv_layers_data[layer].average(temp)
+            if 'input' not in layer:
+                #if self.conv_layers_data[layer] is None:
+                if layer not in self.conv_layers_data:
+                    self.conv_layers_data[layer] = temp
+                else:
+                    self.conv_layers_data[layer].average(temp)
 
     def analyze_dir(self, dir_name):
         for (dirpath, dirnames, filenames) in os.walk(dir_name):
