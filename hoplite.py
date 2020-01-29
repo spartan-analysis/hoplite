@@ -146,6 +146,7 @@ class Hoplite:
 
     @staticmethod
     def consec_chan(output):
+        print(np.shape(output))
         chan_hist = [0] * (len(output) + 1)
         np.apply_along_axis(Hoplite.consec_1d, 0, output, chan_hist)
         return chan_hist
@@ -163,7 +164,6 @@ class Hoplite:
         chunks = Hoplite.chunk_array(arr, vec_size)
         for chunk in chunks:
             zeroes = len(chunk) - np.count_nonzero(chunk)
-            print(zeroes)
             hist[zeroes] += 1
 
     @staticmethod
@@ -191,7 +191,7 @@ class Hoplite:
             layer_model = Model(
                 inputs=self.model.inputs, outputs=self.model.get_layer(layer).output
             )
-            output = layer_model.predict(x)
+            output = layer_model.predict(x)[0]
 
             # for input layers
             if self.input_layer_data == 0 and "input" in layer:
