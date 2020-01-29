@@ -1,8 +1,11 @@
+#!./bin/python
 from tensorflow.keras.applications.vgg16 import VGG16
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.vgg16 import preprocess_input
 from hoplite import Hoplite
 import numpy as np
+
+import cProfile
 
 # returns input ready to be processed
 def vgg16_preprocess(path):
@@ -18,7 +21,8 @@ model = VGG16(
     pooling=None,
     classes=1000,
 )
-h = Hoplite(model, vgg16_preprocess, "output.csv")
+h = Hoplite(model, vgg16_preprocess, "output.csv", 10 ** -6)
 
-h.analyze("test.png")
+# h.analyze("test.png")
+cProfile.run('h.analyze("test.png")')
 h.output()
