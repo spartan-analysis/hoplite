@@ -111,9 +111,6 @@ class Hoplite:
         return abs(number) <= self.zero_sensitivity
 
     def compute_average_sparsity(self, output):
-        # print(output.size)
-        # print(np.count_nonzero(output))
-        # return float(output.size - np.count_nonzero(output)) / float(output.size)
         count = 0
         for chan in output:
             for col in chan:
@@ -197,9 +194,8 @@ class Hoplite:
 
             # for input layers
             if self.input_layer_data == 0 and "input" in layer:
-                name = self.layers[0]
                 self.input_layer_data = LayerData(
-                    name, self.model.layers[0].output_shape[0][1:]
+                    layer, self.model.layers[0].output_shape[0][1:]
                 )
                 self.input_layer_data.average_sparsity = self.compute_average_sparsity(
                     output
