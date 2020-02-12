@@ -94,7 +94,7 @@ class Hoplite:
     """Hoplite Sparsity Analyzer"""
 
     # preprocess is a function
-    def __init__(self, model, preprocess, output_filename, zero_sensitivity=0):
+    def __init__(self, model, preprocess, output_filename, zero_sensitivity=0, max_number=None):
         self.model = model
         # relevant layers are conv and input
         self.layers = [
@@ -106,6 +106,8 @@ class Hoplite:
         self.input_layer_data = 0
         self.conv_layers_data = {}
         self.zero_sensitivity = zero_sensitivity
+        self.counter = 0
+        self.max_number = max_number
 
     def equals_zero(self, number):
         return abs(number) <= self.zero_sensitivity
@@ -184,6 +186,8 @@ class Hoplite:
         return vec_chan_hist
 
     def analyze(self, filename):
+        if self.counter >= self.max_number:
+            return # don't analyze more than max number
         x = self.preprocess(filename)
 
         for layer in self.layers:
@@ -232,6 +236,8 @@ class Hoplite:
                     self.conv_layers_data[layer].average(temp)
 
     def analyze_dir(self, dir_name):
+        if self.counter >= self.max_number:
+            return
         for (dirpath, dirnames, filenames) in os.walk(dir_name):
             for filename in filenames:
                 self.analyze(filename)
