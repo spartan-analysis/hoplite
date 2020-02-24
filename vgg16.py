@@ -21,8 +21,6 @@ model = VGG16(
     pooling=None,
     classes=1000,
 )
-h = Hoplite(model, vgg16_preprocess, "output.csv", 10 ** -6, 400)
-
-# h.analyze("test.png")
-cProfile.run('h.analyze("test.png")')
+h = Hoplite(model, vgg16_preprocess, "output.csv", 10 ** -6, 100)
+h.analyze_dir("/home/ndg0068/DNN/imagenet/EntireDataset/n02088466")
 h.output()
