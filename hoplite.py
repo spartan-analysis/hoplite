@@ -187,11 +187,11 @@ class Hoplite:
         np.apply_along_axis(self.vec_1d, 0, output, vec_size, vec_chan_hist)
         return vec_chan_hist
 
-    def analyze(self, filename):
+    def analyze_raw(self, data):
         if self.max_number is not None and self.counter > self.max_number:
             return  # don't analyze more than max number
-	print("analysing {}".format(filename))
-        x = self.preprocess(filename)
+
+        x = data
 
         for layer in self.layers:
             layer_model = Model(
@@ -239,6 +239,12 @@ class Hoplite:
                     self.conv_layers_data[layer].average(temp)
 
 	self.counter += 1
+
+    def analyze(self, filename):
+	print("analysing {}".format(filename))
+        x = self.preprocess(filename)
+        analyze_raw(x)
+
 
     def analyze_dir(self, dir_name):
         if self.max_number is not None and self.counter >= self.max_number:
