@@ -309,7 +309,7 @@ class Hoplite:
             return
         for (dirpath, dirnames, filenames) in os.walk(dir_name):
             for filename in filenames:
-                self.analyze(filename)
+                self.analyze(dir_name + "/" + filename)
 
     def output(self):
         with open(self.output_filename, "w", newline="") as csv_out:
