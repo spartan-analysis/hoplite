@@ -89,6 +89,64 @@ class LayerData:
             np.array([self.vec32_chan_hist, other.vec32_chan_hist]), axis=0
         ).tolist()
 
+def average_layer_data(data_list):
+    temp = LayerData(data_list[0].name, data_list[0].dimensions)
+
+    temp.average_sparsity = np.mean([x.average_sparsity for x in data_list])
+
+    temp.row_hist = np.mean(
+        np.array([x.row_hist for x in data_list]), axis=0
+    ).tolist()
+    temp.col_hist = np.mean(
+        np.array([x.col_hist for x in data_list]), axis=0
+    ).tolist()
+    temp.chan_hist = np.mean(
+        np.array([x.chan_hist for x in data_list]), axis=0
+    ).tolist()
+
+    temp.vec4_row_hist = np.mean(
+        np.array([x.vec4_row_hist for x in data_list]), axis=0
+    ).tolist()
+    temp.vec4_col_hist = np.mean(
+        np.array([x.vec4_col_hist for x in data_list]), axis=0
+    ).tolist()
+    temp.vec4_chan_hist = np.mean(
+        np.array([x.vec4_chan_hist for x in data_list]), axis=0
+    ).tolist()
+
+    temp.vec8_row_hist = np.mean(
+        np.array([x.vec8_row_hist for x in data_list]), axis=0
+    ).tolist()
+    temp.vec8_col_hist = np.mean(
+        np.array([x.vec8_col_hist for x in data_list]), axis=0
+    ).tolist()
+    temp.vec8_chan_hist = np.mean(
+        np.array([x.vec8_chan_hist for x in data_list]), axis=0
+    ).tolist()
+
+
+    temp.vec16_row_hist = np.mean(
+        np.array([x.vec16_row_hist for x in data_list]), axis=0
+    ).tolist()
+    temp.vec16_col_hist = np.mean(
+        np.array([x.vec16_col_hist for x in data_list]), axis=0
+    ).tolist()
+    temp.vec16_chan_hist = np.mean(
+        np.array([x.vec16_chan_hist for x in data_list]), axis=0
+    ).tolist()
+
+
+    temp.vec32_row_hist = np.mean(
+        np.array([x.vec32_row_hist for x in data_list]), axis=0
+    ).tolist()
+    temp.vec32_col_hist = np.mean(
+        np.array([x.vec32_col_hist for x in data_list]), axis=0
+    ).tolist()
+    temp.vec32_chan_hist = np.mean(
+        np.array([x.vec32_chan_hist for x in data_list]), axis=0
+    ).tolist()
+
+    return temp
 
 class Hoplite:
     """Hoplite Sparsity Analyzer"""
@@ -234,16 +292,16 @@ class Hoplite:
             if "input" not in layer:
                 # if self.conv_layers_data[layer] is None:
                 if layer not in self.conv_layers_data:
-                    self.conv_layers_data[layer] = temp
+                    self.conv_layers_data[layer] = [temp] # TODO MAKE INTO LIST INSTEAD OF JUST A THING
                 else:
-                    self.conv_layers_data[layer].average(temp)
+                    self.conv_layers_data[layer].append(temp)
 
-	self.counter += 1
+        self.counter += 1
 
     def analyze(self, filename):
-	print("analysing {}".format(filename))
+        print("analysing {}".format(filename))
         x = self.preprocess(filename)
-        analyze_raw(x)
+        self.analyze_raw(x)
 
 
     def analyze_dir(self, dir_name):
@@ -264,58 +322,59 @@ class Hoplite:
 
             # output conv layers
             for layer in self.layers[1:]:
+                current = average_layer_data(self.conv_layers_data[layer])
                 writer.writerow(["layer=", layer])
                 writer.writerow(
-                    ["dimensions=", self.conv_layers_data[layer].dimensions]
+                    ["dimensions=", current.dimensions]
                 )
                 writer.writerow(
-                    ["average=", self.conv_layers_data[layer].average_sparsity]
+                    ["average=", current.average_sparsity]
                 )
 
-                writer.writerow(["row_hist=", self.conv_layers_data[layer].row_hist])
-                writer.writerow(["col_hist=", self.conv_layers_data[layer].col_hist])
-                writer.writerow(["chan_hist=", self.conv_layers_data[layer].chan_hist])
+                writer.writerow(["row_hist=", current.row_hist])
+                writer.writerow(["col_hist=", current.col_hist])
+                writer.writerow(["chan_hist=", current.chan_hist])
 
                 writer.writerow(["vector=4"])
                 writer.writerow(
-                    ["vec4_row_hist=", self.conv_layers_data[layer].vec4_row_hist]
+                    ["vec4_row_hist=", current.vec4_row_hist]
                 )
                 writer.writerow(
-                    ["vec4_col_hist=", self.conv_layers_data[layer].vec4_col_hist]
+                    ["vec4_col_hist=", current.vec4_col_hist]
                 )
                 writer.writerow(
-                    ["vec4_chan_hist=", self.conv_layers_data[layer].vec4_chan_hist]
+                    ["vec4_chan_hist=", current.vec4_chan_hist]
                 )
 
                 writer.writerow(["vector=8"])
                 writer.writerow(
-                    ["vec8_row_hist=", self.conv_layers_data[layer].vec8_row_hist]
+                    ["vec8_row_hist=", current.vec8_row_hist]
                 )
                 writer.writerow(
-                    ["vec8_col_hist=", self.conv_layers_data[layer].vec8_col_hist]
+                    ["vec8_col_hist=", current.vec8_col_hist]
                 )
                 writer.writerow(
-                    ["vec8_chan_hist=", self.conv_layers_data[layer].vec8_chan_hist]
+                    ["vec8_chan_hist=", current.vec8_chan_hist]
                 )
 
                 writer.writerow(["vector=16"])
                 writer.writerow(
-                    ["vec16_row_hist=", self.conv_layers_data[layer].vec16_row_hist]
+                    ["vec16_row_hist=", current.vec16_row_hist]
                 )
                 writer.writerow(
-                    ["vec16_col_hist=", self.conv_layers_data[layer].vec16_col_hist]
+                    ["vec16_col_hist=", current.vec16_col_hist]
                 )
                 writer.writerow(
-                    ["vec16_chan_hist=", self.conv_layers_data[layer].vec16_chan_hist]
+                    ["vec16_chan_hist=", current.vec16_chan_hist]
                 )
 
                 writer.writerow(["vector=32"])
                 writer.writerow(
-                    ["vec32_row_hist=", self.conv_layers_data[layer].vec32_row_hist]
+                    ["vec32_row_hist=", current.vec32_row_hist]
                 )
                 writer.writerow(
-                    ["vec32_col_hist=", self.conv_layers_data[layer].vec32_col_hist]
+                    ["vec32_col_hist=", current.vec32_col_hist]
                 )
                 writer.writerow(
-                    ["vec32_chan_hist=", self.conv_layers_data[layer].vec32_chan_hist]
+                    ["vec32_chan_hist=", current.vec32_chan_hist]
                 )
