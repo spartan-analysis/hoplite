@@ -4,8 +4,12 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.vgg16 import preprocess_input
 from hoplite import Hoplite
 import numpy as np
+from argparse import ArgumentParser
 
-import cProfile
+parser = ArgumentParser()
+parser.add_argument("-o", dest="out", help="output file name")
+parser.add_argument("-m", dest="max", help="max number of images")
+parser.add_argument("-d", dest="dir", help="directory to analyze")
 
 # returns input ready to be processed
 def vgg16_preprocess(path):
@@ -21,6 +25,10 @@ model = VGG16(
     pooling=None,
     classes=1000,
 )
-h = Hoplite(model, vgg16_preprocess, "output.csv", 10 ** -6, 100)
-h.analyze_dir("/home/ndg0068/DNN/imagenet/EntireDataset/n02088466")
+
+# needs outfile_name, max # images, and dir name
+args = parser.parse_args()
+
+h = Hoplite(model, vgg16_preprocess, args.out, 10 ** -6, int(args.max))
+h.analyze_dir(args.dir)
 h.output()

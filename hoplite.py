@@ -2,6 +2,7 @@ from tensorflow.keras.models import Model
 import numpy as np
 import csv
 import os
+import time
 
 
 class LayerData:
@@ -89,17 +90,14 @@ class LayerData:
             np.array([self.vec32_chan_hist, other.vec32_chan_hist]), axis=0
         ).tolist()
 
+
 def average_layer_data(data_list):
     temp = LayerData(data_list[0].name, data_list[0].dimensions)
 
     temp.average_sparsity = np.mean([x.average_sparsity for x in data_list])
 
-    temp.row_hist = np.mean(
-        np.array([x.row_hist for x in data_list]), axis=0
-    ).tolist()
-    temp.col_hist = np.mean(
-        np.array([x.col_hist for x in data_list]), axis=0
-    ).tolist()
+    temp.row_hist = np.mean(np.array([x.row_hist for x in data_list]), axis=0).tolist()
+    temp.col_hist = np.mean(np.array([x.col_hist for x in data_list]), axis=0).tolist()
     temp.chan_hist = np.mean(
         np.array([x.chan_hist for x in data_list]), axis=0
     ).tolist()
@@ -124,7 +122,6 @@ def average_layer_data(data_list):
         np.array([x.vec8_chan_hist for x in data_list]), axis=0
     ).tolist()
 
-
     temp.vec16_row_hist = np.mean(
         np.array([x.vec16_row_hist for x in data_list]), axis=0
     ).tolist()
@@ -134,7 +131,6 @@ def average_layer_data(data_list):
     temp.vec16_chan_hist = np.mean(
         np.array([x.vec16_chan_hist for x in data_list]), axis=0
     ).tolist()
-
 
     temp.vec32_row_hist = np.mean(
         np.array([x.vec32_row_hist for x in data_list]), axis=0
@@ -147,6 +143,7 @@ def average_layer_data(data_list):
     ).tolist()
 
     return temp
+
 
 class Hoplite:
     """Hoplite Sparsity Analyzer"""
@@ -292,17 +289,20 @@ class Hoplite:
             if "input" not in layer:
                 # if self.conv_layers_data[layer] is None:
                 if layer not in self.conv_layers_data:
-                    self.conv_layers_data[layer] = [temp] # TODO MAKE INTO LIST INSTEAD OF JUST A THING
+                    self.conv_layers_data[layer] = [
+                        temp
+                    ]  # TODO MAKE INTO LIST INSTEAD OF JUST A THING
                 else:
                     self.conv_layers_data[layer].append(temp)
 
         self.counter += 1
 
     def analyze(self, filename):
+        start = time.time()
         print("analysing {}".format(filename))
         x = self.preprocess(filename)
         self.analyze_raw(x)
-
+        print("program took {} seconds".format(time.time() - start))
 
     def analyze_dir(self, dir_name):
         if self.max_number is not None and self.counter >= self.max_number:
@@ -324,57 +324,29 @@ class Hoplite:
             for layer in self.layers[1:]:
                 current = average_layer_data(self.conv_layers_data[layer])
                 writer.writerow(["layer=", layer])
-                writer.writerow(
-                    ["dimensions=", current.dimensions]
-                )
-                writer.writerow(
-                    ["average=", current.average_sparsity]
-                )
+                writer.writerow(["dimensions=", current.dimensions])
+                writer.writerow(["average=", current.average_sparsity])
 
                 writer.writerow(["row_hist=", current.row_hist])
                 writer.writerow(["col_hist=", current.col_hist])
                 writer.writerow(["chan_hist=", current.chan_hist])
 
                 writer.writerow(["vector=4"])
-                writer.writerow(
-                    ["vec4_row_hist=", current.vec4_row_hist]
-                )
-                writer.writerow(
-                    ["vec4_col_hist=", current.vec4_col_hist]
-                )
-                writer.writerow(
-                    ["vec4_chan_hist=", current.vec4_chan_hist]
-                )
+                writer.writerow(["vec4_row_hist=", current.vec4_row_hist])
+                writer.writerow(["vec4_col_hist=", current.vec4_col_hist])
+                writer.writerow(["vec4_chan_hist=", current.vec4_chan_hist])
 
                 writer.writerow(["vector=8"])
-                writer.writerow(
-                    ["vec8_row_hist=", current.vec8_row_hist]
-                )
-                writer.writerow(
-                    ["vec8_col_hist=", current.vec8_col_hist]
-                )
-                writer.writerow(
-                    ["vec8_chan_hist=", current.vec8_chan_hist]
-                )
+                writer.writerow(["vec8_row_hist=", current.vec8_row_hist])
+                writer.writerow(["vec8_col_hist=", current.vec8_col_hist])
+                writer.writerow(["vec8_chan_hist=", current.vec8_chan_hist])
 
                 writer.writerow(["vector=16"])
-                writer.writerow(
-                    ["vec16_row_hist=", current.vec16_row_hist]
-                )
-                writer.writerow(
-                    ["vec16_col_hist=", current.vec16_col_hist]
-                )
-                writer.writerow(
-                    ["vec16_chan_hist=", current.vec16_chan_hist]
-                )
+                writer.writerow(["vec16_row_hist=", current.vec16_row_hist])
+                writer.writerow(["vec16_col_hist=", current.vec16_col_hist])
+                writer.writerow(["vec16_chan_hist=", current.vec16_chan_hist])
 
                 writer.writerow(["vector=32"])
-                writer.writerow(
-                    ["vec32_row_hist=", current.vec32_row_hist]
-                )
-                writer.writerow(
-                    ["vec32_col_hist=", current.vec32_col_hist]
-                )
-                writer.writerow(
-                    ["vec32_chan_hist=", current.vec32_chan_hist]
-                )
+                writer.writerow(["vec32_row_hist=", current.vec32_row_hist])
+                writer.writerow(["vec32_col_hist=", current.vec32_col_hist])
+                writer.writerow(["vec32_chan_hist=", current.vec32_chan_hist])
