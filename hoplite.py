@@ -243,7 +243,7 @@ class Hoplite:
         return vec_chan_hist
 
     def analyze_raw(self, data):
-        if self.max_number is not None and self.counter > self.max_number:
+        if self.max_number is not None and self.counter >= self.max_number:
             return  # don't analyze more than max number
 
         x = data
@@ -291,7 +291,7 @@ class Hoplite:
                 if layer not in self.conv_layers_data:
                     self.conv_layers_data[layer] = [
                         temp
-                    ]  # TODO MAKE INTO LIST INSTEAD OF JUST A THING
+                    ]
                 else:
                     self.conv_layers_data[layer].append(temp)
 
@@ -299,10 +299,10 @@ class Hoplite:
 
     def analyze(self, filename):
         start = time.time()
-        print("analysing {}".format(filename))
+        # print("analysing {}".format(filename))
         x = self.preprocess(filename)
         self.analyze_raw(x)
-        print("program took {} seconds".format(time.time() - start))
+        # print("program took {} seconds".format(time.time() - start))
 
     def analyze_dir(self, dir_name):
         if self.max_number is not None and self.counter >= self.max_number:
