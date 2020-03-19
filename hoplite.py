@@ -182,18 +182,17 @@ class Hoplite:
         all_nonzeroes = True
         count = 0
         for a in range(len(arr)):
-            end = a == (len(arr) - 1)
             if self.equals_zero(arr[a]):
                 all_nonzeroes = False
                 count += 1
-                if end:
-                    hist[count] += 1
             else:
                 if count != 0:
                     hist[count] += 1
                     count = 0
-                if end and all_nonzeroes:
-                    hist[0] += 1
+        if count != 0
+            hist[count] += 1
+        if all_nonzeroes:
+            hist[0] += 1
 
     def consec_row(self, output):
         row_hist = [0] * (len(output[0][0]) + 1)
