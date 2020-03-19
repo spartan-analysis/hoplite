@@ -214,7 +214,7 @@ class Hoplite:
                 if count != 0:
                     hist[count] += 1
                     count = 0
-        if count != 0
+        if count != 0:
             hist[count] += 1
         if all_nonzeroes:
             hist[0] += 1
