@@ -18,6 +18,11 @@ class LayerData:
         self.col_hist = []
         self.chan_hist = []
 
+        self.vec2_row_hist = []
+        self.vec2_col_hist = []
+        self.vec2_chan_hist = []
+
+
         self.vec4_row_hist = []
         self.vec4_col_hist = []
         self.vec4_chan_hist = []
@@ -48,6 +53,16 @@ class LayerData:
         ).tolist()
         self.chan_hist = np.mean(
             np.array([self.chan_hist, other.chan_hist]), axis=0
+        ).tolist()
+
+        self.vec2_row_hist = np.mean(
+            np.array([self.vec2_row_hist, other.vec2_row_hist]), axis=0
+        ).tolist()
+        self.vec2_col_hist = np.mean(
+            np.array([self.vec2_col_hist, other.vec2_col_hist]), axis=0
+        ).tolist()
+        self.vec2_chan_hist = np.mean(
+            np.array([self.vec2_chan_hist, other.vec2_chan_hist]), axis=0
         ).tolist()
 
         self.vec4_row_hist = np.mean(
@@ -100,6 +115,16 @@ def average_layer_data(data_list):
     temp.col_hist = np.mean(np.array([x.col_hist for x in data_list]), axis=0).tolist()
     temp.chan_hist = np.mean(
         np.array([x.chan_hist for x in data_list]), axis=0
+    ).tolist()
+
+    temp.vec2_row_hist = np.mean(
+        np.array([x.vec2_row_hist for x in data_list]), axis=0
+    ).tolist()
+    temp.vec2_col_hist = np.mean(
+        np.array([x.vec2_col_hist for x in data_list]), axis=0
+    ).tolist()
+    temp.vec2_chan_hist = np.mean(
+        np.array([x.vec2_chan_hist for x in data_list]), axis=0
     ).tolist()
 
     temp.vec4_row_hist = np.mean(
@@ -227,17 +252,17 @@ class Hoplite:
             hist[zeroes] += 1
 
     def vec_3d_row(self, output, vec_size):
-        vec_row_hist = [0] * (vec_size + 5)
+        vec_row_hist = [0] * (vec_size + 1)
         np.apply_along_axis(self.vec_1d, 2, output, vec_size, vec_row_hist)
         return vec_row_hist
 
     def vec_3d_col(self, output, vec_size):
-        vec_col_hist = [0] * (vec_size + 5)
+        vec_col_hist = [0] * (vec_size + 1)
         np.apply_along_axis(self.vec_1d, 1, output, vec_size, vec_col_hist)
         return vec_col_hist
 
     def vec_3d_chan(self, output, vec_size):
-        vec_chan_hist = [0] * (vec_size + 5)
+        vec_chan_hist = [0] * (vec_size + 1)
         np.apply_along_axis(self.vec_1d, 0, output, vec_size, vec_chan_hist)
         return vec_chan_hist
 
@@ -268,6 +293,10 @@ class Hoplite:
             temp.row_hist = self.consec_row(output)
             temp.col_hist = self.consec_col(output)
             temp.chan_hist = self.consec_chan(output)
+
+            temp.vec2_row_hist = self.vec_3d_row(output, 2)
+            temp.vec2_col_hist = self.vec_3d_col(output, 2)
+            temp.vec2_chan_hist = self.vec_3d_chan(output, 2)
 
             temp.vec4_row_hist = self.vec_3d_row(output, 4)
             temp.vec4_col_hist = self.vec_3d_col(output, 4)
@@ -329,6 +358,11 @@ class Hoplite:
                 writer.writerow(["row_hist=", current.row_hist])
                 writer.writerow(["col_hist=", current.col_hist])
                 writer.writerow(["chan_hist=", current.chan_hist])
+
+                writer.writerow(["vector=2"])
+                writer.writerow(["vec2_row_hist=", current.vec2_row_hist])
+                writer.writerow(["vec2_col_hist=", current.vec2_col_hist])
+                writer.writerow(["vec2_chan_hist=", current.vec2_chan_hist])
 
                 writer.writerow(["vector=4"])
                 writer.writerow(["vec4_row_hist=", current.vec4_row_hist])
