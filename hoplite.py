@@ -219,20 +219,20 @@ class Hoplite:
         if all_nonzeroes:
             hist[0] += 1
 
+    def consec_chan(self, output):
+        chan_hist = [0] * (len(output[0][0]) + 1)
+        np.apply_along_axis(self.consec_1d, 2, output, chan_hist)
+        return chan_hist
+
     def consec_row(self, output):
-        row_hist = [0] * (len(output[0][0]) + 1)
-        np.apply_along_axis(self.consec_1d, 2, output, row_hist)
+        row_hist = [0] * (len(output[0]) + 1)
+        np.apply_along_axis(self.consec_1d, 1, output, row_hist)
         return row_hist
 
     def consec_col(self, output):
-        col_hist = [0] * (len(output[0]) + 1)
-        np.apply_along_axis(self.consec_1d, 1, output, col_hist)
+        col_hist = [0] * (len(output) + 1)
+        np.apply_along_axis(self.consec_1d, 0, output, col_hist)
         return col_hist
-
-    def consec_chan(self, output):
-        chan_hist = [0] * (len(output) + 1)
-        np.apply_along_axis(self.consec_1d, 0, output, chan_hist)
-        return chan_hist
 
     @staticmethod
     def chunk_array(lst, n):
@@ -251,20 +251,20 @@ class Hoplite:
                     zeroes += 1
             hist[zeroes] += 1
 
+    def vec_3d_chan(self, output, vec_size):
+        vec_chan_hist = [0] * (vec_size + 1)
+        np.apply_along_axis(self.vec_1d, 2, output, vec_size, vec_chan_hist)
+        return vec_chan_hist
+
     def vec_3d_row(self, output, vec_size):
         vec_row_hist = [0] * (vec_size + 1)
-        np.apply_along_axis(self.vec_1d, 2, output, vec_size, vec_row_hist)
+        np.apply_along_axis(self.vec_1d, 1, output, vec_size, vec_row_hist)
         return vec_row_hist
 
     def vec_3d_col(self, output, vec_size):
         vec_col_hist = [0] * (vec_size + 1)
-        np.apply_along_axis(self.vec_1d, 1, output, vec_size, vec_col_hist)
+        np.apply_along_axis(self.vec_1d, 0, output, vec_size, vec_col_hist)
         return vec_col_hist
-
-    def vec_3d_chan(self, output, vec_size):
-        vec_chan_hist = [0] * (vec_size + 1)
-        np.apply_along_axis(self.vec_1d, 0, output, vec_size, vec_chan_hist)
-        return vec_chan_hist
 
     def analyze_raw(self, data):
         if self.max_number is not None and self.counter >= self.max_number:
