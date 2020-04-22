@@ -5,15 +5,18 @@
 import os
 import subprocess
 
-main_dir = "/home/ndg0068/DNN/imagenet/EntireDataset/"
+#TODO change dir for talon
+main_dir = "/storage/scratch2/share/pi_ndg0068"
 dirs = {}
 count = 0
 
+MAX = 100
+
 for dirpath, dirnames, filenames in os.walk(main_dir):
-    if count > 26:
+    if count > MAX:
         break
     for subdir in dirnames:
-        if count > 26:
+        if count > MAX:
             break
         # check if enough items
         if (
