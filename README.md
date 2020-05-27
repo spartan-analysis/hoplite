@@ -1,20 +1,22 @@
 # hoplite
-general sparsity tests on various neural nets
+General sparsity tests on various neural nets.
 
 ## Set Up
 
 Requirements:
- - virtualenv
- - be able to install tensorflow 2.0 (for whatever reason I wasn't able to get arch linux working yet, but will work on it soon)
+ - be able to install tensorflow 2.0
 
 ```bash
- git clone https://github.com/spartan-analysis/hoplite # clone the repo
+# clone the repo
+git clone https://github.com/spartan-analysis/hoplite
 
 cd hoplite
 
-virtualenv . # some versions of virtualenv need you to specify python 3.0, if so, do so
+# optional, I recommend creating a virtual environment of some sort
+virtualenv env
 
-./bin/pip install -r requirements.txt #congrats! you have set up hoplite... more documentation will be coming in the future.
+./bin/pip install -r requirements.txt
+# congrats! you have set up hoplite!
 ```
 
 ## Usage
