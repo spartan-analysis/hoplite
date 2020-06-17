@@ -1,7 +1,7 @@
 #!./bin/python
 from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
 from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications.vgg16 import preprocess_input
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from hoplite import Hoplite
 import numpy as np
 from argparse import ArgumentParser
