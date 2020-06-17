@@ -22,7 +22,6 @@ class LayerData:
         self.vec2_col_hist = []
         self.vec2_chan_hist = []
 
-
         self.vec4_row_hist = []
         self.vec4_col_hist = []
         self.vec4_chan_hist = []
@@ -175,13 +174,28 @@ class Hoplite:
 
     # preprocess is a function
     def __init__(
-        self, model, preprocess, output_filename, zero_sensitivity=0, max_number=None
+        self,
+        model,
+        preprocess,
+        output_filename,
+        zero_sensitivity=0,
+        max_number=None,
+        only_relu=False,
     ):
         self.model = model
         # relevant layers are conv and input
-        self.layers = [
-            k.name for k in self.model.layers if "conv" in k.name or "input" in k.name
-        ]
+        if only_relu:
+            self.layers = [
+                k.name
+                for k in self.model.layers
+                if "relu" in k.name or "input" in k.name
+            ]
+        else:
+            self.layers = [
+                k.name
+                for k in self.model.layers
+                if "conv" in k.name or "input" in k.name
+            ]
         self.output_filename = output_filename
         self.preprocess = preprocess
 
@@ -317,9 +331,7 @@ class Hoplite:
             if "input" not in layer:
                 # if self.conv_layers_data[layer] is None:
                 if layer not in self.conv_layers_data:
-                    self.conv_layers_data[layer] = [
-                        temp
-                    ]
+                    self.conv_layers_data[layer] = [temp]
                 else:
                     self.conv_layers_data[layer].append(temp)
 
