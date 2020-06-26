@@ -172,30 +172,33 @@ def average_layer_data(data_list):
 class Hoplite:
     """Hoplite Sparsity Analyzer"""
 
-    # preprocess is a function
     def __init__(
         self,
         model,
-        preprocess,
         output_filename,
+        preprocess=lambda x: x,  # a function that takes in a filename and returns input values
         zero_sensitivity=0,
         max_number=None,
-        only_relu=False,
+        only_relu=False,  # TODO remove this since a better solution has been added
+        layers=[],
     ):
         self.model = model
         # relevant layers are conv and input
-        if only_relu:
-            self.layers = [
-                k.name
-                for k in self.model.layers
-                if "relu" in k.name or "input" in k.name
-            ]
+        if layers == []:
+            if only_relu:
+                self.layers = [
+                    k.name
+                    for k in self.model.layers
+                    if "relu" in k.name or "input" in k.name
+                ]
+            else:
+                self.layers = [
+                    k.name
+                    for k in self.model.layers
+                    if "conv" in k.name or "input" in k.name
+                ]
         else:
-            self.layers = [
-                k.name
-                for k in self.model.layers
-                if "conv" in k.name or "input" in k.name
-            ]
+            self.layers = layers
         self.output_filename = output_filename
         self.preprocess = preprocess
 

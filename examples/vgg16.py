@@ -29,6 +29,12 @@ model = VGG16(
 # needs outfile_name, max # images, and dir name
 args = parser.parse_args()
 
-h = Hoplite(model, vgg16_preprocess, args.out, 10 ** -6, int(args.max))
+h = Hoplite(
+    model,
+    args.out,
+    preprocess=vgg16_preprocess,
+    zero_sensitivity=10 ** -6,
+    max_number=int(args.max),
+)
 h.analyze_dir(args.dir)
 h.output()
