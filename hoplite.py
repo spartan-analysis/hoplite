@@ -4,6 +4,10 @@ import csv
 import os
 import time
 
+ROW = 2
+COL = 0
+CHAN = 1
+
 
 class LayerData:
     """ Stores Data about Layers """
@@ -238,17 +242,17 @@ class Hoplite:
 
     def consec_chan(self, output):
         chan_hist = [0] * (len(output[0][0]) + 1)
-        np.apply_along_axis(self.consec_1d, 2, output, chan_hist)
+        np.apply_along_axis(self.consec_1d, CHAN, output, chan_hist)
         return chan_hist
 
     def consec_row(self, output):
         row_hist = [0] * (len(output[0]) + 1)
-        np.apply_along_axis(self.consec_1d, 1, output, row_hist)
+        np.apply_along_axis(self.consec_1d, ROW, output, row_hist)
         return row_hist
 
     def consec_col(self, output):
         col_hist = [0] * (len(output) + 1)
-        np.apply_along_axis(self.consec_1d, 0, output, col_hist)
+        np.apply_along_axis(self.consec_1d, COL, output, col_hist)
         return col_hist
 
     @staticmethod
@@ -270,17 +274,17 @@ class Hoplite:
 
     def vec_3d_chan(self, output, vec_size):
         vec_chan_hist = [0] * (vec_size + 1)
-        np.apply_along_axis(self.vec_1d, 2, output, vec_size, vec_chan_hist)
+        np.apply_along_axis(self.vec_1d, CHAN, output, vec_size, vec_chan_hist)
         return vec_chan_hist
 
     def vec_3d_row(self, output, vec_size):
         vec_row_hist = [0] * (vec_size + 1)
-        np.apply_along_axis(self.vec_1d, 1, output, vec_size, vec_row_hist)
+        np.apply_along_axis(self.vec_1d, ROW, output, vec_size, vec_row_hist)
         return vec_row_hist
 
     def vec_3d_col(self, output, vec_size):
         vec_col_hist = [0] * (vec_size + 1)
-        np.apply_along_axis(self.vec_1d, 0, output, vec_size, vec_col_hist)
+        np.apply_along_axis(self.vec_1d, COL, output, vec_size, vec_col_hist)
         return vec_col_hist
 
     def analyze_raw(self, data):
